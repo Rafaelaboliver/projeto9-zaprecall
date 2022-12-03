@@ -34,23 +34,23 @@ export default function Pergunta(props) {
       : setPerguntaAberta(novaAberta);
   }
 
-  /*function RespostaEscolhida (escolha) {
+  function RespostaEscolhida (escolha) {
     const novaResposta = [...respostaRevelada, escolha.resposta];
     
     respostaRevelada.includes(escolha.resposta) ? setPerguntaAberta.filter((r) => r !== escolha.resposta)
       : setPerguntaAberta(novaResposta);
-  }*/
+  }
 
   if (!perguntaFClicada.includes(Deck.posicao)) {
     return (
       <div>
         {Deck.map((cartao) => (
           <PerguntaFechada
-            key={Deck.posicao}>
-            <p> Pergunta {Deck.posicao}</p>
+            key={cartao.posicao}>
+            <p>Pergunta {cartao.posicao}</p>
             <img onClick={FechadaClicada} src={seta_play} alt='seta_play' />
           </PerguntaFechada>
-          ))
+        ))
         }
       </div>
     );
@@ -90,12 +90,13 @@ export default function Pergunta(props) {
     )
   }
 
+
   return (
     <div>
       {Deck.map((cartao) => (
         <PerguntaFechada
-          key={cartao.posicao}>
-          <p>teste</p>
+          key={cartao.pergunta}>
+          <p></p>
           <img onClick={()=>FechadaClicada(cartao)} src={seta_play} alt='seta_play' />
         </PerguntaFechada>
       ))

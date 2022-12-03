@@ -1,9 +1,10 @@
 import styled from 'styled-components'
 
-export default function Footer(){
+export default function Footer(props){
+    const {respostaRevelada} = props;
     return (
         <FooterConcluidos>
-            <h1>0/8 CONCLUÍDOS</h1>
+            <h1>{respostaRevelada.length}/8 CONCLUÍDOS</h1>
         </FooterConcluidos>
     )
 }
