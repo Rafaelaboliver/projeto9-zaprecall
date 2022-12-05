@@ -1,10 +1,12 @@
 import styled from 'styled-components'
 
 export default function Footer(props){
-    const {respostaRevelada} = props;
+    const {respostaRevelada, respostaSelecionada, contador} = props;
+
+    console.log('COMPRIMENTO', respostaRevelada)
     return (
         <FooterConcluidos>
-            <h1>{respostaRevelada.length}/8 CONCLUÍDOS</h1>
+            <h1>{contador}/8 CONCLUÍDOS</h1>
         </FooterConcluidos>
     )
 }

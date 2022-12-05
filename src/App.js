@@ -7,6 +7,7 @@ import PerguntasDeck from './components/PerguntasDeck';
 
 export default function App() {
   const [respostaRevelada, setRespostaRevelada] = useState([]);
+  const [contador, setContador] = useState(0);
 
   return (
     <ScreenContainer>
@@ -14,8 +15,13 @@ export default function App() {
       <PerguntasDeck 
       key={respostaRevelada}
       respostaRevelada = {respostaRevelada}
-      setRespostaRevelada = {setRespostaRevelada}/>
-      <Footer respostaRevelada={respostaRevelada}/>
+      setRespostaRevelada = {setRespostaRevelada}
+      contador={contador}
+      setContador={setContador}
+      />
+      <Footer 
+      contador={contador}
+      respostaRevelada={respostaRevelada}/>
     </ScreenContainer>
   );
 }

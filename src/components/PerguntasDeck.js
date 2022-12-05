@@ -2,15 +2,26 @@ import { useState } from "react";
 import styled from 'styled-components';
 import seta_play from '../assets/seta_play.png';
 import seta_virar from '../assets/seta_virar.png';
+import icone_certo from '../assets/icone_certo.png';
+import icone_quase from '../assets/icone_quase.png';
+import icone_erro from '../assets/icone_erro.png';
 import deck from "./deck";
 
-export default function PerguntasDeck(props) {
 
+export default function PerguntasDeck(props) {
+    const { respostaRevelada, setRespostaRevelada, respostaSelecionada, setRespostaSelecionada, contador, setContador } = props;
     return (
         <div>
             {deck.map((cartao) => (
                 <PerguntaUnitaria
-                    key={cartao.posicao}>
+                    key={cartao.posicao}
+                    cartao={cartao}
+                    respostaRevelada={respostaRevelada}
+                    setRespostaRevelada={setRespostaRevelada}
+                    respostaSelecionada={respostaSelecionada}
+                    setRespostaSelecionada={setRespostaSelecionada}
+                    contador={contador}
+                    setContador={setContador}>
                     <p></p>
                     <img src={seta_play} alt='seta_play' />
                 </PerguntaUnitaria>
@@ -21,13 +32,15 @@ export default function PerguntasDeck(props) {
 }
 
 function PerguntaUnitaria(props) {
-    const { respostaRevelada, setRespostaRevelada } = props;
+    const { cartao, respostaRevelada, setRespostaRevelada, respostaSelecionada, setRespostaSelecionada, contador, setContador } = props;
 
     /*useStates que irei utilizar nas funções de quando a pergunta fechada for clicada, mostrar pergunta aberta e mostrar a resposta com os
     botões*/
 
     const [perguntaFClicada, setPerguntaFClicada] = useState([]);
     const [perguntaAberta, setPerguntaAberta] = useState([]);
+    const [clicado, setClicado] = useState (false);
+    const [fase, setFase] = useState('');
 
     /*Lógica das funções:
         verificar se o ítem está na lista de clicadas - para receber apenas uma vez
@@ -36,34 +49,38 @@ function PerguntaUnitaria(props) {
             adicionar o cartão dentro do  novo array
     */
 
-    function FechadaClicada(recebe) {
-        const novoFechada = [...perguntaFClicada, recebe.posicao];
-        console.log('BATATA parâmetro', recebe);
-        console.log('BATATA useState', perguntaFClicada);
-        console.log('BATATA novoArray', perguntaFClicada);
+    function fechadaClicada(props) {
+        const novoFechada = [...perguntaFClicada, props.posicao];
 
-        perguntaFClicada.includes(recebe.posicao) ? setPerguntaFClicada(perguntaFClicada.filter((p) => p !== recebe.posicao))
+        perguntaFClicada.includes(props.posicao) ? setPerguntaFClicada(perguntaFClicada.filter((p) => p !== props.posicao))
             : setPerguntaFClicada(novoFechada);
     }
 
-    function AbertaClicada(recebe) {
-        const novaAberta = [...perguntaAberta, recebe.pergunta];
-        console.log('CHUCHU parâmetro', recebe);
-        console.log('CHUCHU useState', perguntaAberta);
-        console.log('CHUCHU novoArray', novaAberta);
+    function abertaClicada(props) {
+        const novaAberta = [...perguntaAberta, props.pergunta];
 
-        perguntaAberta.includes(recebe.pergunta) ? setPerguntaAberta(perguntaAberta.filter((p) => p !== recebe.pergunta))
+        perguntaAberta.includes(props.pergunta) ? setPerguntaAberta(perguntaAberta.filter((p) => p !== props.pergunta))
             : setPerguntaAberta(novaAberta);
     }
 
+    function apertandoBotoes(props, fase) {
+       
+        console.log('AQUI', props);
+    
+        setFase('nao lembrei')
+        setContador(contador + 1)
+
+    }
+
+  
     if (!perguntaFClicada.includes(deck.posicao)) {
         return (
             <div>
 
                 <PerguntaFechada
                     key={deck.posicao}>
-                    <p> {`Pegunta ${deck.posicao}`}</p>
-                    <img onClick={() => FechadaClicada(deck)} src={seta_play} alt='seta_play' />
+                    <p> Pegunta {props.cartao.posicao}</p>
+                    <img onClick={() => fechadaClicada(deck)} src={seta_play} alt='seta_play' />
                 </PerguntaFechada>
 
             </div>
@@ -76,33 +93,65 @@ function PerguntaUnitaria(props) {
 
                 <PerguntaAberta
                     key={deck.posicao}>
-                    <p>{deck.pergunta}</p>
-                    <PerguntaAbertaI onClick={() => AbertaClicada(deck)} src={seta_virar} alt='seta_virar' />
+                    <p>{props.cartao.pergunta}</p>
+                    <PerguntaAbertaI onClick={() => abertaClicada(deck)} src={seta_virar} alt='seta_virar' />
                 </PerguntaAberta>
 
             </div>
         );
     }
 
-    /*if (!respostaRevelada.includes(deck.resposta)) {
+    if (!respostaRevelada.includes(deck.resposta)) {
         return (
             <div>
 
                 <PerguntaAberta
                     key={deck.posicao}>
-                    <p>{deck.resposta}</p>
+                    <p>{props.cartao.resposta}</p>
                     <Botoes>
-                        <BotaoVermelho>Não lembrei</BotaoVermelho>
-                        <BotaoAmarelo>Quase não lembrei</BotaoAmarelo>
-                        <BotaoVerde>Zap!</BotaoVerde>
+                        <BotaoVermelho onClick={() => apertandoBotoes(props.cartao, 'nao lembrei')}>Não lembrei</BotaoVermelho>
+                        <BotaoAmarelo >Quase não lembrei</BotaoAmarelo>
+                        <BotaoVerde >Zap!</BotaoVerde>
                     </Botoes>
                 </PerguntaAberta>
 
             </div>
-        )
-    }*/
+        );
+    }
 
+    if (fase == 'nao lembrei') {
+        return (
+            <PerguntaFechada
+                key={deck.posicao}>
+                <p> Pegunta {props.cartao.posicao}</p>
+                <img src={icone_erro} alt='icone_erro'/>
+            </PerguntaFechada>
+
+        )
+    } 
+    
+    if (fase == 'quase lembrei') {
+        return (
+            <PerguntaFechada
+                key={deck.posicao}>
+                <p> Pegunta {props.cartao.posicao}</p>
+                <img src={icone_quase} alt='icone_quase'/>
+            </PerguntaFechada>
+        )
+    } 
+    
+    if (fase == 'zap') {
+        return (
+            <PerguntaFechada
+                key={deck.posicao}>
+                <p> Pegunta {props.cartao.posicao}</p>
+                <img src={icone_certo} alt='icone_certo'/>
+            </PerguntaFechada>
+        )
+    }
 }
+
+
 
 const PerguntaFechada = styled.div`
  width: 300px;
