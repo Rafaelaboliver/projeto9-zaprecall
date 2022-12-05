@@ -39,8 +39,8 @@ function PerguntaUnitaria(props) {
 
     const [perguntaFClicada, setPerguntaFClicada] = useState([]);
     const [perguntaAberta, setPerguntaAberta] = useState([]);
-    const [clicado, setClicado] = useState (false);
-    const [fase, setFase] = useState('');
+    const [clicado, setClicado] = useState('');
+  
 
     /*Lógica das funções:
         verificar se o ítem está na lista de clicadas - para receber apenas uma vez
@@ -63,23 +63,51 @@ function PerguntaUnitaria(props) {
             : setPerguntaAberta(novaAberta);
     }
 
-    function apertandoBotoes(props, fase) {
-       
-        console.log('AQUI', props);
-    
-        setFase('nao lembrei')
-        setContador(contador + 1)
+    function selecionandoBotao(props, cor) {
+        setClicado(cor);
 
+        const novoBotao = [...clicado, props.cartao.posicao];
+        fechandoPergunta(props, cor);
     }
 
-  
+    function fechandoPergunta(props, cor) {
+        console.log('CONFERE', cor);
+
+        if (cor === 'vermelho') {
+            return (
+                <PerguntaFechada
+                    key={deck.posicao}>
+                    <Paragrafo> Pegunta {props.cartao.posicao}</Paragrafo>
+                    <img onClick={() => fechadaClicada(deck)} src={icone_erro} alt='icone_erro' />
+                </PerguntaFechada>
+            )
+        } else if (cor === 'amarelo') {
+            return (
+                <PerguntaFechada
+                    key={deck.posicao}>
+                    <Paragrafo> Pegunta {props.cartao.posicao}</Paragrafo>
+                    <img onClick={() => fechadaClicada(deck)} src={icone_quase} alt='icone_quase' />
+                </PerguntaFechada>
+            )
+        } else if (cor === 'verde') {
+            return (
+                <PerguntaFechada
+                    key={deck.posicao}>
+                    <Paragrafo> Pegunta {props.cartao.posicao}</Paragrafo>
+                    <img onClick={() => fechadaClicada(deck)} src={icone_certo} alt='icone_certo' />
+                </PerguntaFechada>
+            )
+        }
+    }
+
+
     if (!perguntaFClicada.includes(deck.posicao)) {
         return (
             <div>
 
                 <PerguntaFechada
                     key={deck.posicao}>
-                    <p> Pegunta {props.cartao.posicao}</p>
+                    <Paragrafo> Pegunta {props.cartao.posicao}</Paragrafo>
                     <img onClick={() => fechadaClicada(deck)} src={seta_play} alt='seta_play' />
                 </PerguntaFechada>
 
@@ -109,9 +137,9 @@ function PerguntaUnitaria(props) {
                     key={deck.posicao}>
                     <p>{props.cartao.resposta}</p>
                     <Botoes>
-                        <BotaoVermelho onClick={() => apertandoBotoes(props.cartao, 'nao lembrei')}>Não lembrei</BotaoVermelho>
-                        <BotaoAmarelo >Quase não lembrei</BotaoAmarelo>
-                        <BotaoVerde >Zap!</BotaoVerde>
+                        <BotaoVermelho onClick={() => selecionandoBotao(props, 'vermelho')}>Não lembrei</BotaoVermelho>
+                        <BotaoAmarelo onClick={() => selecionandoBotao(props, 'amarelo')}>Quase não lembrei</BotaoAmarelo>
+                        <BotaoVerde onClick={() => selecionandoBotao(props, 'verde')}>Zap!</BotaoVerde>
                     </Botoes>
                 </PerguntaAberta>
 
@@ -119,36 +147,6 @@ function PerguntaUnitaria(props) {
         );
     }
 
-    if (fase == 'nao lembrei') {
-        return (
-            <PerguntaFechada
-                key={deck.posicao}>
-                <p> Pegunta {props.cartao.posicao}</p>
-                <img src={icone_erro} alt='icone_erro'/>
-            </PerguntaFechada>
-
-        )
-    } 
-    
-    if (fase == 'quase lembrei') {
-        return (
-            <PerguntaFechada
-                key={deck.posicao}>
-                <p> Pegunta {props.cartao.posicao}</p>
-                <img src={icone_quase} alt='icone_quase'/>
-            </PerguntaFechada>
-        )
-    } 
-    
-    if (fase == 'zap') {
-        return (
-            <PerguntaFechada
-                key={deck.posicao}>
-                <p> Pegunta {props.cartao.posicao}</p>
-                <img src={icone_certo} alt='icone_certo'/>
-            </PerguntaFechada>
-        )
-    }
 }
 
 
@@ -265,4 +263,8 @@ const Botoes = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+`
+
+const Paragrafo = styled.p`
+    color: ${props => props.cor};
 `
