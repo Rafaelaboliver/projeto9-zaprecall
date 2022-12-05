@@ -6,7 +6,7 @@ export default function Footer(props){
     console.log('COMPRIMENTO', respostaRevelada)
     return (
         <FooterConcluidos>
-            <h1>{contador}/8 CONCLUÍDOS</h1>
+            <h1 data-test="footer">{contador}/8 CONCLUÍDOS</h1>
         </FooterConcluidos>
     )
 }

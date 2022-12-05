@@ -20,8 +20,7 @@ export default function App() {
       setContador={setContador}
       />
       <Footer 
-      contador={contador}
-      respostaRevelada={respostaRevelada}/>
+      contador={contador}respostaRevelada={respostaRevelada}/>
     </ScreenContainer>
   );
 }

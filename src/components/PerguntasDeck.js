@@ -67,6 +67,7 @@ function PerguntaUnitaria(props) {
         setClicado(cor);
 
         const novoBotao = [...clicado, props.cartao.posicao];
+
         fechandoPergunta(props, cor);
     }
 
@@ -77,24 +78,24 @@ function PerguntaUnitaria(props) {
             return (
                 <PerguntaFechada
                     key={deck.posicao}>
-                    <Paragrafo> Pegunta {props.cartao.posicao}</Paragrafo>
-                    <img onClick={() => fechadaClicada(deck)} src={icone_erro} alt='icone_erro' />
+                    <Paragrafo data-test="flashcard-text"> Pegunta {props.cartao.posicao}</Paragrafo>
+                    <img data-test="no-icon" src={icone_erro} alt='icone_erro' />
                 </PerguntaFechada>
             )
         } else if (cor === 'amarelo') {
             return (
                 <PerguntaFechada
                     key={deck.posicao}>
-                    <Paragrafo> Pegunta {props.cartao.posicao}</Paragrafo>
-                    <img onClick={() => fechadaClicada(deck)} src={icone_quase} alt='icone_quase' />
+                    <Paragrafo data-test="flashcard-text"> Pegunta {props.cartao.posicao}</Paragrafo>
+                    <img data-test="partial-icon" src={icone_quase} alt='icone_quase' />
                 </PerguntaFechada>
             )
         } else if (cor === 'verde') {
             return (
                 <PerguntaFechada
                     key={deck.posicao}>
-                    <Paragrafo> Pegunta {props.cartao.posicao}</Paragrafo>
-                    <img onClick={() => fechadaClicada(deck)} src={icone_certo} alt='icone_certo' />
+                    <Paragrafo data-test="flashcard-text"> Pegunta {props.cartao.posicao}</Paragrafo>
+                    <img data-test="zap-icon" src={icone_certo} alt='icone_certo' />
                 </PerguntaFechada>
             )
         }
@@ -103,14 +104,12 @@ function PerguntaUnitaria(props) {
 
     if (!perguntaFClicada.includes(deck.posicao)) {
         return (
-            <div>
-
+            <div data-test="flashcard">
                 <PerguntaFechada
                     key={deck.posicao}>
-                    <Paragrafo> Pegunta {props.cartao.posicao}</Paragrafo>
-                    <img onClick={() => fechadaClicada(deck)} src={seta_play} alt='seta_play' />
+                    <Paragrafo data-test="flashcard-text"> Pegunta {props.cartao.posicao}</Paragrafo>
+                    <img data-test="play-btn" onClick={() => fechadaClicada(deck)} src={seta_play} alt='seta_play' />
                 </PerguntaFechada>
-
             </div>
         );
     }
@@ -118,13 +117,11 @@ function PerguntaUnitaria(props) {
     if (!perguntaAberta.includes(deck.pergunta)) {
         return (
             <div>
-
                 <PerguntaAberta
                     key={deck.posicao}>
-                    <p>{props.cartao.pergunta}</p>
-                    <PerguntaAbertaI onClick={() => abertaClicada(deck)} src={seta_virar} alt='seta_virar' />
+                    <p data-test="flashcard-text">{props.cartao.pergunta}</p>
+                    <PerguntaAbertaI data-test="turn-btn" onClick={() => abertaClicada(deck)} src={seta_virar} alt='seta_virar' />
                 </PerguntaAberta>
-
             </div>
         );
     }
@@ -132,17 +129,15 @@ function PerguntaUnitaria(props) {
     if (!respostaRevelada.includes(deck.resposta)) {
         return (
             <div>
-
                 <PerguntaAberta
                     key={deck.posicao}>
-                    <p>{props.cartao.resposta}</p>
+                    <p data-test="flashcard-text">{props.cartao.resposta}</p>
                     <Botoes>
-                        <BotaoVermelho onClick={() => selecionandoBotao(props, 'vermelho')}>Não lembrei</BotaoVermelho>
-                        <BotaoAmarelo onClick={() => selecionandoBotao(props, 'amarelo')}>Quase não lembrei</BotaoAmarelo>
-                        <BotaoVerde onClick={() => selecionandoBotao(props, 'verde')}>Zap!</BotaoVerde>
+                        <BotaoVermelho data-test="no-btn" onClick={() => selecionandoBotao(props, 'vermelho')}>Não lembrei</BotaoVermelho>
+                        <BotaoAmarelo data-test="partial-btn" onClick={() => selecionandoBotao(props, 'amarelo')}>Quase não lembrei</BotaoAmarelo>
+                        <BotaoVerde data-test="zap-btn" onClick={() => selecionandoBotao(props, 'verde')}>Zap!</BotaoVerde>
                     </Botoes>
                 </PerguntaAberta>
-
             </div>
         );
     }
