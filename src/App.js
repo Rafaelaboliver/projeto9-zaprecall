@@ -1,8 +1,9 @@
 import styled from 'styled-components'
-import Pergunta from './components/Pergunta';
 import Footer from './components/Footer';
 import Logo from './components/Logo';
 import { useState } from 'react';
+import PerguntasDeck from './components/PerguntasDeck';
+//import Pergunta from './components/Pergunta';
 
 export default function App() {
   const [respostaRevelada, setRespostaRevelada] = useState([]);
@@ -10,7 +11,7 @@ export default function App() {
   return (
     <ScreenContainer>
       <Logo/>
-      <Pergunta 
+      <PerguntasDeck 
       key={respostaRevelada}
       respostaRevelada = {respostaRevelada}
       setRespostaRevelada = {setRespostaRevelada}/>

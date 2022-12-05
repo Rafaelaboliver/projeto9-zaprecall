@@ -6,96 +6,94 @@ import { useState } from "react";
 
 export default function Pergunta(props) {
   const {respostaRevelada, setRespostaRevelada} = props;
+  const deck = Deck;
+  console.log(deck);
 
 
   //irie utilizar na função de quando a pergunta fechada for clicada, mostrar pergunta aberta e mostrar a resposta
   const [perguntaFClicada, setPerguntaFClicada] = useState([]);
   const [perguntaAberta, setPerguntaAberta] = useState([]);
   
-  function FechadaClicada(cartao) {
-    console.log('parâmetro cartaoClicado',cartao);
-    const novoFechada = [...perguntaFClicada, cartao.posicao];
-    console.log('variavel', novoFechada)
+  function FechadaClicada(verifica) {
+    const novoFechada = [...perguntaFClicada, deck.posicao];
+    console.log('variavel', verifica)
 
     /*  //verificar se a pergunta fechada está na lista de clicadas - para receber apenas uma vez
         //=> deve filtrar esse cartão dentro do array
     //SENÃO
       //=> adicionar o cartão dentro do  novo array*/
 
-    perguntaFClicada.includes(cartao.posicao) ? setPerguntaFClicada.filter((p) => p !== cartao.posicao)
+    perguntaFClicada.includes(deck.posicao) ? setPerguntaFClicada(perguntaFClicada.filter((p) => p !== deck.posicao))
       : setPerguntaFClicada(novoFechada);
   }
 
-  function AbertaClicada(perguntaRevelada) {
-    const novaAberta = [...perguntaAberta, perguntaRevelada.pergunta];
+  function AbertaClicada() {
+    const novaAberta = [...perguntaAberta, deck.pergunta];
     console.log('aberta', novaAberta);
 
-    perguntaAberta.includes(perguntaRevelada.pergunta) ? setPerguntaAberta.filter((p) => p !== perguntaRevelada.pergunta)
+    perguntaAberta.includes(deck.pergunta) ? setPerguntaAberta(perguntaAberta.filter((p) => p !== deck.pergunta))
       : setPerguntaAberta(novaAberta);
   }
 
-  function RespostaEscolhida (escolha) {
+  /*function RespostaEscolhida (escolha) {
     const novaResposta = [...respostaRevelada, escolha.resposta];
     
-    respostaRevelada.includes(escolha.resposta) ? setPerguntaAberta.filter((r) => r !== escolha.resposta)
+    respostaRevelada.includes(escolha.resposta) ? setRespostaRevelada(respostaRevelada.filter((r) => r !== escolha.resposta))
       : setPerguntaAberta(novaResposta);
-  }
+  }*/
 
-  if (!perguntaFClicada.includes(Deck.posicao)) {
+  if (!perguntaFClicada.includes(deck.posicao)) {
     return (
       <div>
-        {Deck.map((cartao) => (
+       
           <PerguntaFechada
-            key={cartao.posicao}>
-            <p>Pergunta {cartao.posicao}</p>
-            <img onClick={FechadaClicada} src={seta_play} alt='seta_play' />
+            key={deck.posicao}>
+            <p> Pergunta {deck.posicao}</p>
+            <img onClick={() => FechadaClicada(deck)} src={seta_play} alt='seta_play' />
           </PerguntaFechada>
-        ))
-        }
+         
       </div>
     );
   }
 
-  if (!perguntaAberta.includes(Deck.pergunta)) {
+  if (!perguntaAberta.includes(deck.pergunta)) {
     return (
       <div>
-        {Deck.map((cartao) => (
+       
           <PerguntaAberta
-            key={cartao.posicao}>
-            <p>{cartao.pergunta}</p>
-            <PerguntaAbertaI onClick={AbertaClicada} src={seta_virar} alt='seta_virar' />
+            key={deck.posicao}>
+            <p>{deck.pergunta}</p>
+            <PerguntaAbertaI onClick={() => AbertaClicada(deck)} src={seta_virar} alt='seta_virar' />
           </PerguntaAberta>
-        ))
-        }
+        
       </div>
     );
   }
 
-  if (!respostaRevelada.includes(Deck.resposta)){
+  if (!respostaRevelada.includes(deck.resposta)){
     return (
       <div>
-        {Deck.map((cartao) => (
+      
           <PerguntaAberta
-            key={cartao.posicao}>
-            <p>{cartao.resposta}</p>
+            key={deck.posicao}>
+            <p>{deck.resposta}</p>
             <Botoes>
             <BotaoVermelho>Não lembrei</BotaoVermelho>
             <BotaoAmarelo>Quase não lembrei</BotaoAmarelo>
             <BotaoVerde>Zap!</BotaoVerde>
             </Botoes>
           </PerguntaAberta>
-        ))
-        }
+       ))
+      }
       </div>
     )
   }
-
 
   return (
     <div>
       {Deck.map((cartao) => (
         <PerguntaFechada
-          key={cartao.pergunta}>
+          key={cartao.posicao}>
           <p></p>
           <img onClick={()=>FechadaClicada(cartao)} src={seta_play} alt='seta_play' />
         </PerguntaFechada>
