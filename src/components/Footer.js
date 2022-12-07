@@ -1,12 +1,12 @@
 import styled from 'styled-components'
+import deck from '../constants/deck';
 
 export default function Footer(props){
-    const {respostaRevelada, respostaSelecionada, contador} = props;
+    const {contador} = props;
 
-    console.log('COMPRIMENTO', respostaRevelada)
     return (
         <FooterConcluidos>
-            <h1 data-test="footer">{contador}/8 CONCLUÍDOS</h1>
+            <h1 data-test="footer">{contador}/{deck.length} CONCLUÍDOS</h1>
         </FooterConcluidos>
     )
 }

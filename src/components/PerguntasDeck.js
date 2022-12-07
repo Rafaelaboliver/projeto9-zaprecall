@@ -1,25 +1,22 @@
 import { useState } from "react";
 import styled from 'styled-components';
-import seta_play from '../assets/seta_play.png';
+import deck from '../constants/deck';
 import seta_virar from '../assets/seta_virar.png';
+import seta_play from '../assets/seta_play.png';
 import icone_certo from '../assets/icone_certo.png';
 import icone_quase from '../assets/icone_quase.png';
 import icone_erro from '../assets/icone_erro.png';
-import deck from "./deck";
+import { CORVERMELHA, CORAMARELA, CORVERDE, CORCINZA } from '../constants/cores';
 
 
 export default function PerguntasDeck(props) {
-    const { respostaRevelada, setRespostaRevelada, respostaSelecionada, setRespostaSelecionada, contador, setContador } = props;
+    const { contador, setContador } = props;
     return (
         <div>
             {deck.map((cartao) => (
                 <PerguntaUnitaria
                     key={cartao.posicao}
                     cartao={cartao}
-                    respostaRevelada={respostaRevelada}
-                    setRespostaRevelada={setRespostaRevelada}
-                    respostaSelecionada={respostaSelecionada}
-                    setRespostaSelecionada={setRespostaSelecionada}
                     contador={contador}
                     setContador={setContador}>
                     <p></p>
@@ -32,116 +29,97 @@ export default function PerguntasDeck(props) {
 }
 
 function PerguntaUnitaria(props) {
-    const { cartao, respostaRevelada, setRespostaRevelada, respostaSelecionada, setRespostaSelecionada, contador, setContador } = props;
+    const { cartao, contador, setContador } = props;
 
     /*useStates que irei utilizar nas funções de quando a pergunta fechada for clicada, mostrar pergunta aberta e mostrar a resposta com os
     botões*/
 
-    const [perguntaFClicada, setPerguntaFClicada] = useState([]);
-    const [perguntaAberta, setPerguntaAberta] = useState([]);
-    const [clicado, setClicado] = useState('');
-  
+    const [perguntaFClicada, setPerguntaFClicada] = useState(false);
+    const [perguntaAberta, setPerguntaAberta] = useState(false);
+    const [statusIcone, setStatusIcone] = useState('play');
 
     /*Lógica das funções:
-        verificar se o ítem está na lista de clicadas - para receber apenas uma vez
-            deve filtrar esse cartão dentro do array
-        SENÃO
-            adicionar o cartão dentro do  novo array
+        => Inicia como false, ou seja, fase seguinte desativada. SE clicado: ativa a próxima etapa. SENÃO: apenas o estado inicial
+        dessa etapa é mostrado.
+
+        => Para a pergunta ser aberta anpenas uma ÚNICA vez:
+        Se a pergunta AINDA não foi clicada: ela pode receber true. SE já foi clicada: esse estado recebe false e nenhuma fase
+        posterior será ativada. 
     */
 
-    function fechadaClicada(props) {
-        const novoFechada = [...perguntaFClicada, props.posicao];
-
-        perguntaFClicada.includes(props.posicao) ? setPerguntaFClicada(perguntaFClicada.filter((p) => p !== props.posicao))
-            : setPerguntaFClicada(novoFechada);
+    function fechadaClicada() {
+        if (!perguntaAberta) {
+            setPerguntaFClicada(true);
+        } else {
+            setPerguntaFClicada(false);
+        };
     }
 
-    function abertaClicada(props) {
-        const novaAberta = [...perguntaAberta, props.pergunta];
-
-        perguntaAberta.includes(props.pergunta) ? setPerguntaAberta(perguntaAberta.filter((p) => p !== props.pergunta))
-            : setPerguntaAberta(novaAberta);
+    function abertaClicada() {
+        setPerguntaAberta(true);
     }
 
-    function selecionandoBotao(props, cor) {
-        setClicado(cor);
-
-        const novoBotao = [...clicado, props.cartao.posicao];
-
-        fechandoPergunta(props, cor);
-    }
-
-    function fechandoPergunta(props, cor) {
-        console.log('CONFERE', cor);
-
-        if (cor === 'vermelho') {
-            return (
-                <PerguntaFechada
-                    key={deck.posicao}>
-                    <Paragrafo data-test="flashcard-text"> Pegunta {props.cartao.posicao}</Paragrafo>
-                    <img data-test="no-icon" src={icone_erro} alt='icone_erro' />
-                </PerguntaFechada>
-            )
-        } else if (cor === 'amarelo') {
-            return (
-                <PerguntaFechada
-                    key={deck.posicao}>
-                    <Paragrafo data-test="flashcard-text"> Pegunta {props.cartao.posicao}</Paragrafo>
-                    <img data-test="partial-icon" src={icone_quase} alt='icone_quase' />
-                </PerguntaFechada>
-            )
-        } else if (cor === 'verde') {
-            return (
-                <PerguntaFechada
-                    key={deck.posicao}>
-                    <Paragrafo data-test="flashcard-text"> Pegunta {props.cartao.posicao}</Paragrafo>
-                    <img data-test="zap-icon" src={icone_certo} alt='icone_certo' />
-                </PerguntaFechada>
-            )
-        }
+    function selecionandoBotao(status) {
+        setPerguntaFClicada(false);
+        setContador(contador + 1);
+        setStatusIcone(status); 
     }
 
 
-    if (!perguntaFClicada.includes(deck.posicao)) {
+    function fechandoPergunta() {
+
+        switch(statusIcone) {
+            case 'erro':
+                return icone_erro;
+            case 'quase':
+                return icone_quase;
+            case 'zap':
+                return icone_certo;
+            default:
+                return seta_play;
+            }
+    }
+
+    if (!perguntaFClicada) {
         return (
             <div data-test="flashcard">
                 <PerguntaFechada
-                    key={deck.posicao}>
-                    <Paragrafo data-test="flashcard-text"> Pegunta {props.cartao.posicao}</Paragrafo>
-                    <img data-test="play-btn" onClick={() => fechadaClicada(deck)} src={seta_play} alt='seta_play' />
+                    key={deck.posicao}
+                    status={statusIcone}>
+                    <p
+                        data-test="flashcard-text"
+                        cor={props.cor}>
+                        Pegunta {props.cartao.posicao}
+                    </p>
+                    <img data-test="play-btn" onClick={() => fechadaClicada()} src={fechandoPergunta()} alt='icone do cartão' />
                 </PerguntaFechada>
             </div>
         );
-    }
-
-    if (!perguntaAberta.includes(deck.pergunta)) {
+    } else if (!perguntaAberta) {
         return (
             <div>
                 <PerguntaAberta
                     key={deck.posicao}>
                     <p data-test="flashcard-text">{props.cartao.pergunta}</p>
-                    <PerguntaAbertaI data-test="turn-btn" onClick={() => abertaClicada(deck)} src={seta_virar} alt='seta_virar' />
+                    <PerguntaAbertaI data-test="turn-btn" onClick={() => abertaClicada()} src={seta_virar} alt='seta_virar' />
                 </PerguntaAberta>
             </div>
         );
-    }
-
-    if (!respostaRevelada.includes(deck.resposta)) {
+    } else {
         return (
             <div>
                 <PerguntaAberta
                     key={deck.posicao}>
                     <p data-test="flashcard-text">{props.cartao.resposta}</p>
                     <Botoes>
-                        <BotaoVermelho data-test="no-btn" onClick={() => selecionandoBotao(props, 'vermelho')}>Não lembrei</BotaoVermelho>
-                        <BotaoAmarelo data-test="partial-btn" onClick={() => selecionandoBotao(props, 'amarelo')}>Quase não lembrei</BotaoAmarelo>
-                        <BotaoVerde data-test="zap-btn" onClick={() => selecionandoBotao(props, 'verde')}>Zap!</BotaoVerde>
+                        <BotaoVermelho data-test="no-btn" onClick={() => selecionandoBotao('erro')}>Não lembrei</BotaoVermelho>
+                        <BotaoAmarelo data-test="partial-btn" onClick={() => selecionandoBotao('quase')}>Quase não lembrei</BotaoAmarelo>
+                        <BotaoVerde data-test="zap-btn" onClick={() => selecionandoBotao('zap')}>Zap!</BotaoVerde>
                     </Botoes>
                 </PerguntaAberta>
             </div>
         );
     }
-
 }
 
 
@@ -163,10 +141,21 @@ p{font-family: 'Recursive';
   font-weight: 700;
   font-size: 16px;
   line-height: 19px;
-  color: #333333;
+  text-decoration: ${props => props.status === 'play' ? 'none' : 'line-through'};
+  color: ${props => {
+        switch (props.status) {
+            case 'erro':
+                return CORVERMELHA;
+            case 'quase':
+                return CORAMARELA;
+            case 'zap':
+                return CORVERDE;
+            default:
+                return CORCINZA;
+        }
+    }};
 }
 `
-
 const PerguntaAberta = styled.div`
  width: 300px;
   margin: 12px;
@@ -186,13 +175,11 @@ const PerguntaAberta = styled.div`
   flex-direction: column;
   justify-content: space-between;
 `
-
 const PerguntaAbertaI = styled.img`
   position: absolute;
   bottom: 10px;
   right: 10px;
 `
-
 const BotaoVermelho = styled.button`
  width: 90px;
   font-family: 'Recursive';
@@ -244,22 +231,10 @@ const BotaoAmarelo = styled.button`
   border: 1px solid #FF922E;
   padding:5px;
 `
-
-/* vou trocar a cor dos botões e alguns textos!
-  VERDE = "#2FBE34"
-  AMARELO = "#FF922E"
-  VERMELHO = "#FF3030"
-  CINZA = "#333333" 
-*/
-
 const Botoes = styled.div`
  
   position: relative;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-`
-
-const Paragrafo = styled.p`
-    color: ${props => props.cor};
 `
